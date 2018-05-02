@@ -1,3 +1,6 @@
+#Author: Noah Leuthaeuser
+#Referenced this Bokeh tutorial heavily: https://towardsdatascience.com/data-visualization-with-bokeh-in-python-part-one-getting-started-a11655a467d4
+
 from bokeh.io import output_file, show
 from bokeh.layouts import widgetbox, layout, row, column
 from bokeh.models.widgets import Select, DataTable, TableColumn, Div
@@ -9,6 +12,7 @@ from bokeh.palettes import Spectral11
 from bokeh.transform import factor_cmap
 from bokeh.server.server import Server
 from bokeh.core.properties import value
+from math import pi
 import pandas as pd
 import numpy as np
 
@@ -17,7 +21,6 @@ def make_dataset(name):
     dfPlot = dfOut.loc[dfOut["mlb_name"] == name].drop_duplicates()
     dfTable = dfStats.loc[dfStats["mlb_name"]== name]
     name = np.array_str(dfPlot["mlb_name"].unique())[2:-2]
-    #todo: replace pitch type code with full pitch name 
     pitches = dfPlot["pitch_type"].unique()
     source = ColumnDataSource(dfPlot)
     stats_source = ColumnDataSource(dfTable)
@@ -32,7 +35,13 @@ def make_plot_qual(data, name, pitches,all_pitches):
     p.vbar(x='pitch_type', top='quality', width=0.9, source=data,line_color='white',
        fill_color=factor_cmap('pitch_type', palette=Spectral11, factors=all_pitches))
 
-    hover = HoverTool(tooltips=[("Num pitches", "@pitch_count")])
+    pitch_names = {"FA": "Fastball","FF":"Four-seam Fastball", "FT": "Two-seam Fastball",
+        "FC": "Cutter", "FS":"Sinking Fastball","FO":"Pitch Out","SI":"Sinker","SL":"Slider",
+        "CU":"Curveball","KC":"Knuckle-curve","EP":"Eephus","CH":"Changeup","SC":"Screwball",
+        "KN":"Knuckleball"}
+
+    hover = HoverTool(tooltips=[("Num pitches", "@pitch_count"),("Quality","@quality{0.000}"),
+        ("Avg quality","@avg_qual{0.000}"),("Pitch name","@pitch_name")])
     p.add_tools(hover)
     return p
 
@@ -59,12 +68,16 @@ def make_plot_breakdown(data,pitches):
 #create data table to display pitcher stats from 2017  
 def make_table(data, name):
     columns = [
+        TableColumn(field="teamID", title="Team"),
         TableColumn(field="ERA", title="ERA"),
         TableColumn(field="IP", title="IP"),
         TableColumn(field = "SO", title = "SO"),
         TableColumn(field = "HR", title = "HR"),
         TableColumn(field = "WHIP", title = "WHIP")
     ]
+    #Deserialization error that prints when changing the pitcher is a known issue in Bokeh
+    #doesn't effect performance of the display
+    #https://github.com/bokeh/bokeh/issues/7417
     data_table = DataTable(source=data, columns=columns, width=300, height=200, index_position = None)
     return data_table
 
@@ -76,7 +89,6 @@ def update(attr,old,new):
     p1_qual.title.text = name
     p1_break.x_range.factors = list(pitches)
     data.data.update(new_src.data)
-    #data_table1.update()
     stats.data.update(stats_src.data)
 
 #update callback for second pitcher section 
@@ -90,8 +102,8 @@ def update2(attr,old,new):
     stats2.data.update(stats_src.data)
 
 #read datasets and create list of all pitch types
-dfOut = pd.read_csv("pitch_quality.csv")
-dfStats = pd.read_csv("pitcher_stats.csv")
+dfOut = pd.read_csv("data/pitch_quality.csv")
+dfStats = pd.read_csv("data/pitcher_stats.csv")
 all_pitches = dfOut["pitch_type"].unique()
 
 #initialize names for first view
@@ -110,11 +122,11 @@ p2_break = make_plot_breakdown(data2,pitches2)
 data_table1 = make_table(stats,name)
 data_table2 = make_table(stats2,name2)
 
-#create list of pitchers 
+#create list of pitchers for dropdown menu 
 pitchers = dfOut["mlb_name"].drop_duplicates().tolist()
 pitchers.sort(key=str.lower)
 
-#dropdown menu initialization 
+#dropdown menu initializations
 select = Select(title="Pitcher:", value="", options= pitchers)
 select.on_change('value',update)
 
