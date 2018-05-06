@@ -6,7 +6,7 @@ To run the program and view the dashboard, enter the command 'bokeh serve --show
 # Contents 
 pitch_quality.py: Bokeh code for running dashboard program and plotting data 
 
-pitch_confidence.ipynb: Jupyter notebook for creating pitch quality dataset and some early Bokeh graphs
+data_notebook.ipynb: Jupyter notebook for creating pitch quality dataset and some early Bokeh graphs
 
 data: various data sources for generating pitch_quality.csv and pitcher_stats.csv, which are used for the plots. The full PITCHf/x dataset used for creating the plotting data is not included in the repository due to size. 
 
