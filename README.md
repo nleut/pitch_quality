@@ -10,6 +10,8 @@ pitch_confidence.ipynb: Jupyter notebook for creating pitch quality dataset and 
 
 data: various data sources for generating pitch_quality.csv and pitcher_stats.csv, which are used for the plots. The full PITCHf/x dataset used for creating the plotting data is not included in the repository due to size. 
 
+pitch_quality_demo.mp4: Video demonstration of statistic and application
+
 # Requirements 
 Bokeh version 0.12.15 
 
