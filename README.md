@@ -8,17 +8,19 @@ pitch_quality.py: Bokeh code for running dashboard program and plotting data
 
 pitch_confidence.ipynb: Jupyter notebook for creating pitch quality dataset and some early Bokeh graphs
 
-csv files: various data sources for generating pitch_quality.csv and pitcher_stats.csv, which are used for the plots
+data: various data sources for generating pitch_quality.csv and pitcher_stats.csv, which are used for the plots. The full PITCHf/x dataset used for creating the plotting data is not included in the repository due to size. 
 
 # Requirements 
 Bokeh version 0.12.15 
 
 Pandas version 0.20.1
 
+NumPy version 1.12.1
+
 # Description
 The pitch quality statistic is meant to display how effective a pitcher is at throwing certain types of pitches. The statistic takes into account the result of every pitch thrown to determine the effect it has on the game and how effective the pitcher is at throwing it. Currently, there is no statistic available to holistically evaluate how good a pitcher is at throwing different types of pitches. I think a statistic like pitch quality will make it easier to compare a pitchers effectiveness with different types of pitches, or compare between pitchers to see who has better results when throwing certain pitches.
 
-Pitch quality is assigned by giving a score based on the result of the pitch every time a pitcher throws a certain pitch type. The score begins with the basic result of the pitch, assigning values like 0.3 for a called strike or -0.05 for a ball. If the pitch was the final pitch in a plate appearance, a greater weight is assigned to the pitch for the result of the at-bat. For example, a double brings the score down by -2.54, and a strikeout increases the score by 2.2. If runners are in scoring position, the weight is modified by a factor of 1.2 to emphasize how pitch results are more important with runners in scoring position. The pitch quality for a pitch type is calculated as the mean for all individual pitch weights with that type. 
+Pitch quality is assigned by giving a score based on the result of the pitch every time a pitcher throws a certain pitch type. The score begins with the basic result of the pitch, assigning values like 0.1 for a called strike or -0.05 for a ball. If the pitch was the final pitch in a plate appearance, a greater weight is assigned to the pitch for the result of the at-bat. For example, a double brings the score down by -2.54, and a strikeout increases the score by 2.2. If runners are in scoring position, the weight is modified by a factor of 1.2 to emphasize how pitch results are more important with runners in scoring position. The pitch quality for a pitch type is calculated as the mean for all individual pitch weights with that type. 
 
 Modifications could be made to the pitch quality statistic for different purposes. For example, a pitcher may want to know which pitch type he can most reliably throw to get a strike with a full count. Seeing quality results based on different situations may be an interesting addition to the statistic. Additionally, it would be interesting to further break the pitch quality results up by the type of batter the pitcher is matching up with. 
 
